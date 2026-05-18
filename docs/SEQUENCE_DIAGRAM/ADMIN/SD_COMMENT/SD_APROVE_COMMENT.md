@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/5a0fb913-07cb-4493-98b5-e3cd6d951ab1)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - APPROVE COMMENT \[PORTFOLIO\]](https://shorturl.at/reXaC)**
 
