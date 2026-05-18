@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/40aa7915-6d6d-4e45-8770-0e12d14020f9)
 
 **NGUỒN: [SƠ ĐỒ STATE MACHINE DIAGRAM - READ NOTIFICATION \[PORTFOLIO\]](https://shorturl.fm/vR2i5)**
 
