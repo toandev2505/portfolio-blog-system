@@ -1,4 +1,4 @@
-![IMG_256](https://github.com/user-attachments/assets/321b99f0-f985-4040-864c-31f5957d887e)
+![IMG_256](https://github.com/user-attachments/assets/d2fb1e25-2f90-4943-ac83-1711ead4b7dc)
 
 **NGUỒN: [SƠ ĐỒ ERD \[PORTFOLIO\]](https://shorturl.fm/pJxD2)**
 
