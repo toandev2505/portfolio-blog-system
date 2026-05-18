@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/6a7dd360-9618-45b7-a301-2a670b2b32f5)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - UPDATE TAG \[PORTFOLIO\]](https://shorturl.fm/i1vYP)**
 
