@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/848aa04c-3d58-4592-a4ce-c82400368add)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - DELETE PROJECT \[PORTFOLIO\]](https://shorturl.at/T0tAj)**
 
