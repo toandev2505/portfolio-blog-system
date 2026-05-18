@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/d713733c-f5c5-43e1-b136-89b703369e97)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - VIEW POST \[PORTFOLIO\]](https://shorturl.at/Uarue)**
 
