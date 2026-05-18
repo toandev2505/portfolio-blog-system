@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/ce04ed43-68c0-4c26-a21e-437e1a972bba)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - FILTER PROJECT BY TECHNOLOGIES \[PORTFOLIO\]](https://shorturl.fm/T6mnV)**
 
