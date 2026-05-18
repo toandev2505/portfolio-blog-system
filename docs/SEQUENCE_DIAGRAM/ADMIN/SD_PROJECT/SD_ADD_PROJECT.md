@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/d125e761-a7a7-4d68-a43c-ea494004f202)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - ADD PROJECT \[PORTFOLIO\]](https://shorturl.fm/2XeLF)**
 
