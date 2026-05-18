@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/d3282ee7-d450-4df8-8026-92d1fd0267cd)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - ADD CATEGORY & TAG \[PORTFOLIO\]](https://shorturl.fm/DFdcy)**
 
