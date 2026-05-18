@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/722beb04-c066-4f35-91ef-51e1cfd02804)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - ADD COMMENT \[PORTFOLIO\]](https://shorturl.fm/oFs0Q)**
 
