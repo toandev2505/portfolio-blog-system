@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/726f7e16-63e2-4cec-9efc-6fc718ed2254)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - VIEW NOTIFICATIONS \[PORTFOLIO\]](https://shorturl.at/dzsTk)**
 
