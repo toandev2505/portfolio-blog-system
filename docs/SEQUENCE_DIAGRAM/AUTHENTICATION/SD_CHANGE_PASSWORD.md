@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/9a54511f-c57f-4b94-8f21-42fea9d79f12)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - CHANGE PASSWORD \[PORTFOLIO\]](https://shorturl.at/WVbc1)**
 
