@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/c283850f-2cf8-43ee-8435-857a13865927)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - DELETE NOTIFICATIONS \[PORTFOLIO\]](https://shorturl.at/DGvvA)**
 
