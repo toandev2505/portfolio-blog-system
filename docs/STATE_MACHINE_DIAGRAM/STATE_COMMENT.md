@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/48acf056-28ee-4161-9b51-651022550111)
 
 **NGUỒN: [SƠ ĐỒ STATE MACHINE DIAGRAM - COMMENT \[PORTFOLIO\]](https://shorturl.fm/ETSAz)**
 
