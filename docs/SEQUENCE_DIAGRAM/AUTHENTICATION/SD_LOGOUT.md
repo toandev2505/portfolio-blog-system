@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/203f03df-c528-44d3-8b09-a3b8872506ea)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - LOGOUT \[PORTFOLIO\]](https://shorturl.at/COk9T)**
 
