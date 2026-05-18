@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/af869c08-8ade-42af-bc20-c925ca1351b1)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - VIEW PROFILE \[PORTFOLIO\]](https://shorturl.at/cJKp7)**
 
