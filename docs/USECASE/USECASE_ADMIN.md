@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/14000418-a0b9-4d8d-b671-266cfe4fe126)
 
 **NGUỒN: [SƠ ĐỒ USECASE - ADMIN \[PORTFOLIO\]](https://shorturl.fm/05ivB)**
 
