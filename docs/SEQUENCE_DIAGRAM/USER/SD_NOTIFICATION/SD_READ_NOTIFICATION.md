@@ -1,6 +1,6 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/3bfbf568-5dda-4726-bc17-4285548209eb)
 
-**NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - READ NOTIFICATION \[PORTFOLIO\]](https://shorturl.at/dzsTk)**
+**NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - READ NOTIFICATION \[PORTFOLIO\]](https://shorturl.at/m8Ybd)**
 
 **Code**
 
