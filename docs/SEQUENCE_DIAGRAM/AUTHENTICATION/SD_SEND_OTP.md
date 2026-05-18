@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/b9b7d0a5-fded-4890-8613-783f26ec87b3)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - SEND OTP \[PORTFOLIO\]](https://shorturl.fm/dZHD1)**
 
