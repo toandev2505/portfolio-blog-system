@@ -1,6 +1,6 @@
-![IMG_256](https://github.com/user-attachments/assets/cb25444a-4ca7-4a8d-a436-b5eac3606950)
+![IMG_256](https://github.com/user-attachments/assets/cb1789ef-a987-4241-b20f-e750a52fb9d1)
 
-**NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - REGISTER \[PORTFOLIO\]](https://shorturl.at/GmOqT)**
+**NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - REGISTER \[PORTFOLIO\]](https://shorturl.at/wj2pB)**
 
 **Code**
 
