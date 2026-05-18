@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/56f67969-b33c-45e4-adf3-cb781194bc04)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - REJECT COMMENT \[PORTFOLIO\]](https://shorturl.at/qRnBA)**
 
