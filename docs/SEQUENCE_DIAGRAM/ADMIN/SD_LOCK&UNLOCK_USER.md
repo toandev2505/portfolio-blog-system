@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/88747953-211f-481f-a482-adf1be2eb5ad)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - LOCK / UNLOCK USER \[PORTFOLIO\]](https://shorturl.at/Ufg48)**
 
