@@ -1,4 +1,4 @@
-![IMG_256]()
+![IMG_256](https://github.com/user-attachments/assets/72ecee88-f1b2-47ed-9640-4710fadfd469)
 
 **NGUỒN: [SƠ ĐỒ SEQUENCE DIAGRAM - UPLOAD CV \[PORTFOLIO\]](https://shorturl.at/XssFR)**
 
