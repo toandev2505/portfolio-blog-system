@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -7,33 +7,35 @@ import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import Button from '../components/common/Button';
 
-import avatarImg from '../assets/avatar.png'
+// Import instance Axios đã cấu hình chung
+import axiosInstance from '../api/axiosConfig';
+
+import avatarImg from '../assets/avatar.png';
 
 export default function Home() {
-  // Dữ liệu giả lập (Mock Data) theo wireframe
-  const latestPosts = [
-    {
-      id: 1,
-      category: 'System Design',
-      title: 'Design a Scalable Blog Platform',
-      description: 'A step-by-step guide to designing a scalable blog platform with...',
-      date: 'May 12, 2024'
-    },
-    {
-      id: 2,
-      category: 'Backend',
-      title: 'Understanding Event-Driven Architecture',
-      description: 'Learn how event-driven architecture works and when to use it...',
-      date: 'May 5, 2024'
-    },
-    {
-      id: 3,
-      category: 'Database',
-      title: 'Database Indexing Best Practices',
-      description: 'Improve your database performance with proper indexing strategies.',
-      date: 'Apr 28, 2024'
-    }
-  ];
+  // 1. Thay thế mảng tĩnh bằng State để lưu dữ liệu từ API PostgreSQL
+  const [latestPosts, setLatestPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 2. Gọi API khi trang Home được load lên lần đầu
+  useEffect(() => {
+    const fetchLatestProjects = async () => {
+      try {
+        // Gọi tới endpoint GET /api/projects từ Backend Spring Boot
+        const response = await axiosInstance.get('/v1/public/projects');
+        
+        // Giới hạn lấy tối đa 3 dự án mới nhất để hiển thị ở trang chủ
+        const top3Projects = response.data.slice(0, 3);
+        setLatestPosts(top3Projects);
+      } catch (error) {
+        console.error("Lỗi khi kết nối API Spring Boot:", error);
+      } finally {
+        setLoading(false); // Tắt trạng thái Loading dù thành công hay thất bại
+      }
+    };
+
+    fetchLatestProjects();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900 font-sans">
@@ -55,7 +57,6 @@ export default function Home() {
               I build scalable web applications and share knowledge about system design, architecture and development.
             </p>
             
-            {/* Tích hợp Button Component vào đây */}
             <div className="flex space-x-4">
               <Button variant="primary" onClick={() => window.location.href = '/projects'}>
                 View Projects
@@ -65,7 +66,6 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Social Icons (Đã fix lỗi ESLint và SVG nguyên bản) */}
             <div className="flex space-x-4 text-gray-500 pt-2">
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors" aria-label="Github">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -80,20 +80,18 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Avatar Area */}
           <div className="flex justify-center md:justify-end">
             <div className="w-80 h-80 rounded-full border border-gray-200 shadow-md overflow-hidden bg-gray-50">
               <img 
                 src={avatarImg} 
-                alt="John Doe" 
+                alt="Quoc Toan" 
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-                // object-cover giúp ảnh tự động co giãn vừa khít vòng tròn không bị méo tỉ lệ
               />
             </div>
           </div>
         </header>
 
-        {/* 3. NAVIGATION CARDS (3 Khối điều hướng nhanh) */}
+        {/* 3. NAVIGATION CARDS */}
         <section className="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
           <div className="border border-gray-200 p-6 rounded-lg hover:shadow-md transition">
             <h3 className="font-bold text-lg mb-2">Projects</h3>
@@ -120,41 +118,80 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 4. LATEST BLOG POSTS */}
+        {/* 4. LATEST PROJECTS SECTION (Thay đổi tiêu đề từ Blog thành Projects để khớp dữ liệu DB) */}
         <section className="max-w-6xl mx-auto px-4 py-12 border-t border-gray-100 mb-12">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold">Latest Blog Posts</h2>
-            <Link to="/blog" className="text-sm font-semibold flex items-center gap-1 hover:underline text-gray-600 hover:text-black">
-              View all posts <ArrowRight size={16} />
+            <h2 className="text-2xl font-bold">Latest Projects</h2>
+            <Link to="/projects" className="text-sm font-semibold flex items-center gap-1 hover:underline text-gray-600 hover:text-black">
+              View all projects <ArrowRight size={16} />
             </Link>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {latestPosts.map((post) => (
-              <article key={post.id} className="border border-gray-200 rounded-lg overflow-hidden flex flex-col hover:shadow-sm transition bg-white">
-                <div className="h-44 bg-gray-50 flex items-center justify-center border-b border-gray-200 relative">
-                  <span className="text-xs text-gray-400 uppercase tracking-widest">Thumbnail</span>
+            {/* HIỂN THỊ SKELETON LOADING KHI ĐANG ĐỢI API TRẢ VỀ */}
+            {loading ? (
+              [1, 2, 3].map((n) => (
+                <div key={n} className="border border-gray-200 rounded-lg overflow-hidden animate-pulse">
+                  <div className="h-44 bg-gray-200"></div>
+                  <div className="p-5 space-y-4">
+                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  </div>
                 </div>
-                
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <span className="inline-block bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded border border-gray-200 font-medium">
-                      {post.category}
-                    </span>
-                    <h3 className="font-bold text-lg leading-snug hover:text-blue-600 cursor-pointer">
-                      {post.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
-                      {post.description}
-                    </p>
+              ))
+            ) : latestPosts.length === 0 ? (
+              // Trường hợp API chạy thành công nhưng không có bản ghi nào trong DB
+              <div className="col-span-3 text-center py-8 text-gray-500">
+                Chưa có dự án nào được cập nhật.
+              </div>
+            ) : (
+              // RENDER DỮ LIỆU THẬT TỪ POSTGRESQL
+              latestPosts.map((project) => (
+                <article key={project.id} className="border border-gray-200 rounded-lg overflow-hidden flex flex-col hover:shadow-md transition bg-white">
+                  {/* Thay thế khung thumbnail tĩnh bằng ảnh thật từ database */}
+                  <div className="h-44 bg-gray-50 border-b border-gray-200 relative overflow-hidden">
+                    <img 
+                      src={project.thumbnailLink || 'https://via.placeholder.com/400x176'} 
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
-                  <div className="text-xs text-gray-400 font-medium pt-2 border-t border-gray-100">
-                    {post.date}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      {/* Hiển thị vai trò (Role) thay cho category cũ */}
+                      <span className="inline-block bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded border border-gray-200 font-medium">
+                        {project.role || 'Developer'}
+                      </span>
+                      <h3 className="font-bold text-lg leading-snug hover:text-blue-600 cursor-pointer line-clamp-2" onClick={() => window.location.href = `/projects/${project.slug}`}>
+                        {project.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {project.description}
+                      </p>
+                    </div>
+                    
+                    {/* Hiển thị danh sách công nghệ (techList đã được cắt chuỗi ở Backend DTO) */}
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {project.techList && project.techList.slice(0, 3).map((tech, idx) => (
+                        <span key={idx} className="bg-blue-50 text-blue-600 text-[11px] px-2 py-0.5 rounded font-medium">
+                          {tech}
+                        </span>
+                      ))}
+                      {project.techList && project.techList.length > 3 && (
+                        <span className="text-gray-400 text-[11px] px-1 py-0.5">+{project.techList.length - 3}</span>
+                      )}
+                    </div>
+                    
+                    {/* Định dạng ngày tháng năm làm dự án (from_date) */}
+                    <div className="text-xs text-gray-400 font-medium pt-2 border-t border-gray-100">
+                      {project.fromDate ? new Date(project.fromDate).toLocaleDateString('vi-VN', {year: 'numeric', month: 'long'}) : 'Năm 2026'}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))
+            )}
           </div>
         </section>
 
