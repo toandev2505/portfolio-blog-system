@@ -1,3 +1,16 @@
 spring:
   application:
     name: portfolio-blog-system
+  datasource:
+    url: jdbc:postgresql://localhost:5432/portfolio_blog_db
+    username: postgres
+    password: 1111
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
