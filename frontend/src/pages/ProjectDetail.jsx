@@ -12,7 +12,7 @@ export default function ProjectDetail() {
   const [error, setError] = useState(null);
 
   // Lấy trạng thái đăng nhập & phân quyền từ localStorage
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
   const isAdmin = token && userRole === 'ADMIN';
 
@@ -67,7 +67,7 @@ export default function ProjectDetail() {
         {isAdmin && (
           <div className="flex gap-2 w-full sm:w-auto">
             <button
-              onClick={() => navigate(`/admin/projects/edit/${id}`)}
+              onClick={() => navigate(`/projects/edit?=${id}`)}
               className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-4 py-2 rounded-lg transition"
             >
               <Edit2 size={14} /> Chỉnh sửa

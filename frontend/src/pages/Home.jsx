@@ -3,8 +3,6 @@ import { ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom'; // 1. Bổ sung thêm useNavigate ở đây
 
 // Import các components common dùng chung
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
 import Button from '../components/common/Button';
 
 // Import instance Axios đã cấu hình chung
@@ -20,7 +18,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   // 3. Đọc thông tin đăng nhập từ localStorage để xử lý giao diện
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
   const isAdmin = token && userRole === 'ADMIN';
 

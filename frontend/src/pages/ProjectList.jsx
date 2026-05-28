@@ -10,7 +10,7 @@ export default function ProjectManagement() {
   const navigate = useNavigate();
   
   // 1. Lấy thông tin chứng thực từ localStorage
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
   
   // Kiểm tra xem người dùng hiện tại có phải là ADMIN hay không
@@ -63,7 +63,7 @@ export default function ProjectManagement() {
         {/* Nếu là ADMIN thì mới hiển thị nút Thêm */}
         {isAdmin && (
           <button 
-            onClick={() => navigate('/admin/projects/create')}
+            onClick={() => navigate('/project/edit')}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm"
           >
             <Plus size={18} /> Thêm Dự Án Mới
@@ -82,7 +82,7 @@ export default function ProjectManagement() {
                 /* NẾU LÀ ADMIN: Hiện nút Chỉnh sửa và Xóa nhanh */
                 <>
                   <button 
-                    onClick={() => navigate(`/admin/projects/edit/${project.id}`)}
+                    onClick={() => navigate(`/project/edit?id=${project.id}`)}
                     className="p-2 bg-white text-gray-700 rounded-full hover:text-blue-600 shadow-md transition"
                     title="Sửa dự án"
                   >

@@ -34,7 +34,7 @@ export default function Login() {
       const { accessToken, role } = response.data;
 
       // Lưu trữ thông tin bảo mật vào localStorage của trình duyệt
-      localStorage.setItem('token', accessToken);
+      localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('role', role);
 
       alert('Đăng nhập thành công!');

@@ -10,13 +10,13 @@ export default function Header() {
   const navigate = useNavigate();
 
   // 1. Đọc dữ liệu chứng thực thực tế từ localStorage
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
   const isAdmin = token && userRole === 'ADMIN';
 
   // Hàm xử lý Đăng xuất (Clear sạch session và đá về trang chủ)
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
     localStorage.removeItem('role');
     setShowUserMenu(false);
     alert('Đã đăng xuất thành công!');
