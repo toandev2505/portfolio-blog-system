@@ -17,9 +17,6 @@ public class ArchitectureEntity extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     @OneToMany(mappedBy = "architecture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProjectEntity> projects;
 }

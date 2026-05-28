@@ -10,5 +10,4 @@ import lombok.*;
 public class ArchitectureDTO extends BaseDTO {
 
     private String name;
-    private String description;
 }

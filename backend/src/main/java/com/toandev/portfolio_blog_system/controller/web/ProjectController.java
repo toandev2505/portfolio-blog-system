@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController(value = "controllerOfWeb")
 @RequestMapping("/api/v1/public/projects")
 @CrossOrigin(origins = "*")
 public class ProjectController {

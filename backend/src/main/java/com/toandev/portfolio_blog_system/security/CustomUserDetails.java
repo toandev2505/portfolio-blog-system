@@ -10,11 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-public class CustomUserDetail implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final UserEntity userEntity;
 
-    public CustomUserDetail(UserEntity userEntity) {
+    public CustomUserDetails(UserEntity userEntity) {
         this.userEntity = userEntity;
     }
 
@@ -24,7 +24,7 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(userEntity.getRole()));
     }
 
     @Override

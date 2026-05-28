@@ -11,6 +11,7 @@ public class UserDTO extends BaseDTO {
 
     private String username;
     private String email;
+    private String password;
     private String role;
     private Integer status;
 }
