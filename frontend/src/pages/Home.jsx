@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // 1. Bổ sung thêm useNavigate ở đây
 
 // Import các components common dùng chung
 import Header from '../components/common/Header';
@@ -13,24 +13,28 @@ import axiosInstance from '../api/axiosConfig';
 import avatarImg from '../assets/avatar.png';
 
 export default function Home() {
-  // 1. Thay thế mảng tĩnh bằng State để lưu dữ liệu từ API PostgreSQL
   const [latestPosts, setLatestPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // 2. Khởi tạo hook điều hướng mượt mà của React Router
+  const navigate = useNavigate();
 
-  // 2. Gọi API khi trang Home được load lên lần đầu
+  // 3. Đọc thông tin đăng nhập từ localStorage để xử lý giao diện
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('role');
+  const isAdmin = token && userRole === 'ADMIN';
+
+  // Gọi API khi trang Home được load lên lần đầu
   useEffect(() => {
     const fetchLatestProjects = async () => {
       try {
-        // Gọi tới endpoint GET /api/projects từ Backend Spring Boot
         const response = await axiosInstance.get('/v1/public/projects');
-        
-        // Giới hạn lấy tối đa 3 dự án mới nhất để hiển thị ở trang chủ
         const top3Projects = response.data.slice(0, 3);
         setLatestPosts(top3Projects);
       } catch (error) {
         console.error("Lỗi khi kết nối API Spring Boot:", error);
       } finally {
-        setLoading(false); // Tắt trạng thái Loading dù thành công hay thất bại
+        setLoading(false);
       }
     };
 
@@ -39,9 +43,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900 font-sans">
-      
-      {/* 1. TÍCH HỢP NAVBAR COMMON */}
-      <Header />
 
       {/* CHỨA NỘI DUNG CHÍNH CỦA TRANG HOME */}
       <main className="flex-grow">
@@ -58,12 +59,21 @@ export default function Home() {
             </p>
             
             <div className="flex space-x-4">
-              <Button variant="primary" onClick={() => window.location.href = '/projects'}>
+              {/* Đã sửa: Thay window.location.href bằng điều hướng navigate của React */}
+              <Button variant="primary" onClick={() => navigate('/projects')}>
                 View Projects
               </Button>
-              <Button variant="secondary" onClick={() => console.log('Download CV')}>
-                Download CV
-              </Button>
+
+              {/* Tối ưu UX: Nếu là ADMIN thì đổi nút download thành nút vào thẳng trang Quản trị */}
+              {isAdmin ? (
+                <Button variant="secondary" onClick={() => navigate('/projects')}>
+                  Quản Lý Dự Án
+                </Button>
+              ) : (
+                <Button variant="secondary" onClick={() => console.log('Download CV')}>
+                  Download CV
+                </Button>
+              )}
             </div>
 
             <div className="flex space-x-4 text-gray-500 pt-2">
@@ -96,7 +106,7 @@ export default function Home() {
           <div className="border border-gray-200 p-6 rounded-lg hover:shadow-md transition">
             <h3 className="font-bold text-lg mb-2">Projects</h3>
             <p className="text-sm text-gray-600 mb-4">Things I've built and worked on.</p>
-            <Link to="/projects" className="text-sm font-semibold flex items-center gap-1 hover:underline">
+            <Link to="/projects" className="text-sm font-semibold flex items-center gap-1 hover:underline text-blue-600">
               View all <ArrowRight size={16} />
             </Link>
           </div>
@@ -104,7 +114,7 @@ export default function Home() {
           <div className="border border-gray-200 p-6 rounded-lg hover:shadow-md transition">
             <h3 className="font-bold text-lg mb-2">Blog</h3>
             <p className="text-sm text-gray-600 mb-4">Thoughts, tutorials and technical articles.</p>
-            <Link to="/blog" className="text-sm font-semibold flex items-center gap-1 hover:underline">
+            <Link to="/blog" className="text-sm font-semibold flex items-center gap-1 hover:underline text-blue-600">
               View all <ArrowRight size={16} />
             </Link>
           </div>
@@ -112,13 +122,13 @@ export default function Home() {
           <div className="border border-gray-200 p-6 rounded-lg hover:shadow-md transition">
             <h3 className="font-bold text-lg mb-2">Resume</h3>
             <p className="text-sm text-gray-600 mb-4">My experience, education and skills.</p>
-            <Link to="/resume" className="text-sm font-semibold flex items-center gap-1 hover:underline">
+            <Link to="/resume" className="text-sm font-semibold flex items-center gap-1 hover:underline text-blue-600">
               View resume <ArrowRight size={16} />
             </Link>
           </div>
         </section>
 
-        {/* 4. LATEST PROJECTS SECTION (Thay đổi tiêu đề từ Blog thành Projects để khớp dữ liệu DB) */}
+        {/* 4. LATEST PROJECTS SECTION */}
         <section className="max-w-6xl mx-auto px-4 py-12 border-t border-gray-100 mb-12">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold">Latest Projects</h2>
@@ -128,7 +138,6 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* HIỂN THỊ SKELETON LOADING KHI ĐANG ĐỢI API TRẢ VỀ */}
             {loading ? (
               [1, 2, 3].map((n) => (
                 <div key={n} className="border border-gray-200 rounded-lg overflow-hidden animate-pulse">
@@ -141,15 +150,12 @@ export default function Home() {
                 </div>
               ))
             ) : latestPosts.length === 0 ? (
-              // Trường hợp API chạy thành công nhưng không có bản ghi nào trong DB
               <div className="col-span-3 text-center py-8 text-gray-500">
                 Chưa có dự án nào được cập nhật.
               </div>
             ) : (
-              // RENDER DỮ LIỆU THẬT TỪ POSTGRESQL
               latestPosts.map((project) => (
                 <article key={project.id} className="border border-gray-200 rounded-lg overflow-hidden flex flex-col hover:shadow-md transition bg-white">
-                  {/* Thay thế khung thumbnail tĩnh bằng ảnh thật từ database */}
                   <div className="h-44 bg-gray-50 border-b border-gray-200 relative overflow-hidden">
                     <img 
                       src={project.thumbnailLink || 'https://via.placeholder.com/400x176'} 
@@ -160,19 +166,23 @@ export default function Home() {
                   
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      {/* Hiển thị vai trò (Role) thay cho category cũ */}
                       <span className="inline-block bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded border border-gray-200 font-medium">
                         {project.role || 'Developer'}
                       </span>
-                      <h3 className="font-bold text-lg leading-snug hover:text-blue-600 cursor-pointer line-clamp-2" onClick={() => window.location.href = `/projects/${project.slug}`}>
+                      
+                      {/* Đã sửa: Thay window.location.href tại đây sang navigate */}
+                      <h3 
+                        className="font-bold text-lg leading-snug hover:text-blue-600 cursor-pointer line-clamp-2" 
+                        onClick={() => navigate(`/projects/${project.slug || project.id}`)}
+                      >
                         {project.title}
                       </h3>
+                      
                       <p className="text-sm text-gray-600 line-clamp-2">
                         {project.description}
                       </p>
                     </div>
                     
-                    {/* Hiển thị danh sách công nghệ (techList đã được cắt chuỗi ở Backend DTO) */}
                     <div className="flex flex-wrap gap-1 pt-1">
                       {project.techList && project.techList.slice(0, 3).map((tech, idx) => (
                         <span key={idx} className="bg-blue-50 text-blue-600 text-[11px] px-2 py-0.5 rounded font-medium">
@@ -184,7 +194,6 @@ export default function Home() {
                       )}
                     </div>
                     
-                    {/* Định dạng ngày tháng năm làm dự án (from_date) */}
                     <div className="text-xs text-gray-400 font-medium pt-2 border-t border-gray-100">
                       {project.fromDate ? new Date(project.fromDate).toLocaleDateString('vi-VN', {year: 'numeric', month: 'long'}) : 'Năm 2026'}
                     </div>
@@ -196,9 +205,6 @@ export default function Home() {
         </section>
 
       </main>
-
-      {/* 5. TÍCH HỢP FOOTER COMMON */}
-      <Footer />
 
     </div>
   );

@@ -1,9 +1,32 @@
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
 import Home from './pages/Home'
+import ProjectList from './pages/ProjectList';
+import ProjectDetail from './pages/ProjectDetail';
+import Login from './pages/Login'
 
 function App() {
   return (
-    <Home />
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+      
+      {/* Header đặt ở đây sẽ luôn xuất hiện ở TẤT CẢ các trang với cùng 1 giao diện */}
+      <Header />
+
+      {/* Phần nội dung trang sẽ thay đổi linh hoạt bên dưới */}
+      <main className="flex-grow">
+      <Routes>
+        <Route path="/projects" element={<ProjectList />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/projects/:id" element={<ProjectDetail />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+      </main>
+
+      <Footer />
+
+    </div>
   );
 }
 
