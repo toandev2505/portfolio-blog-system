@@ -8,6 +8,7 @@ import java.util.List;
 public interface ProjectService {
     List<ProjectDTO> getAllProjects();
     ProjectDTO getProjectById(Long id);
+    ProjectDTO getProjectBySlug(String slug);
 
     ProjectEntity createProject(ProjectDTO dto, String currentUsername);
     ProjectEntity updateProject(Long id, ProjectDTO dto);

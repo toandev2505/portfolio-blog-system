@@ -7,8 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@RestController(value = "controllerOfWeb")
+@RestController(value = "controllerOfWebProject")
 @RequestMapping("/api/v1/public/projects")
 @CrossOrigin(origins = "*")
 public class ProjectController {
@@ -21,8 +22,13 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id) {
-        return ResponseEntity.ok(projectService.getProjectById(id));
+    @GetMapping("/{slug}")
+    public ResponseEntity<?> getProjectBySlug(@PathVariable("slug") String slug) {
+        try {
+            ProjectDTO projectDTO = projectService.getProjectBySlug(slug);
+            return ResponseEntity.ok(projectDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
     }
 }

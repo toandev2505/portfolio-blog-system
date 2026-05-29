@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-@RestController(value = "controllerOfAdmin")
+@RestController(value = "controllerOfAdminProject")
 @RequestMapping("/api/v1/admin/projects")
 @CrossOrigin(origins = "*")
 public class ProjectController {

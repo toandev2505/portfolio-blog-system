@@ -21,17 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private ProjectConverter projectConverter;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ArchitectureRepository architectureRepository;
+    @Autowired private ProjectRepository projectRepository;
+    @Autowired private ProjectConverter projectConverter;
+    @Autowired private UserRepository userRepository;
+    @Autowired private ArchitectureRepository architectureRepository;
 
     @Override
     public List<ProjectDTO> getAllProjects() {
@@ -47,20 +40,66 @@ public class ProjectServiceImpl implements ProjectService {
         return projectConverter.toDTO(project);
     }
 
-    // 1. THÊM MỚI PROJECT
+    @Override
+    public ProjectDTO getProjectBySlug(String slug) {
+        ProjectEntity project = projectRepository.findOneBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy dự án với đường dẫn: " + slug));
+
+        ProjectDTO dto = new ProjectDTO();
+
+        dto.setId(project.getId());
+        dto.setCreatedDate(project.getCreatedDate());
+
+        if (project.getUser() != null) {
+            dto.setUserId(project.getUser().getId());
+            dto.setUserName(project.getUser().getUsername()); // Hoặc tên hiển thị tùy bạn thiết kế
+        }
+
+        if (project.getArchitecture() != null) {
+            dto.setArchitectureId(project.getArchitecture().getId());
+            dto.setArchitectureName(project.getArchitecture().getName()); // Đảm bảo trường này trùng khớp Entity Architecture
+        }
+
+        dto.setTitle(project.getTitle());
+        dto.setDescription(project.getDescription());
+        dto.setTechnologies(project.getTechnologies());
+
+        if (project.getTechnologies() != null && !project.getTechnologies().isBlank()) {
+            String[] techs = project.getTechnologies().split(",");
+            for (int i = 0; i < techs.length; i++) {
+                techs[i] = techs[i].trim(); // Xóa khoảng trắng thừa
+            }
+            dto.setTechList(techs);
+        } else {
+            dto.setTechList(new String[0]);
+        }
+
+        dto.setProjectLinks(project.getProjectLinks());
+        dto.setDiagramLinks(project.getDiagramLinks());
+        dto.setDemoLink(project.getDemoLink());
+        dto.setGithubLink(project.getGithubLink());
+        dto.setThumbnailLink(project.getThumbnailLink());
+        dto.setRole(project.getRole());
+        dto.setTeamSize(project.getTeamSize());
+        dto.setHighlightFeatures(project.getHighlightFeatures());
+        dto.setSlug(project.getSlug());
+        dto.setFromDate(project.getFromDate());
+        dto.setToDate(project.getToDate());
+
+        return dto;
+    }
+
     @Transactional
+    @Override
     public ProjectEntity createProject(ProjectDTO dto, String currentUsername) {
-        // Lấy thông tin User (Tác giả) dựa theo Username trích xuất từ Token JWT
         UserEntity user = userRepository.findOneByUsername(currentUsername);
         if (userRepository.findOneByUsername(user.getUsername()) == null) {
             throw new RuntimeException("Không tìm thấy tài khoản người dùng: " + currentUsername);
         }
 
-        // Lấy thông tin kiến trúc hệ thống tương ứng
         ArchitectureEntity architecture = architectureRepository.findById(dto.getArchitectureId())
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy kiến trúc ID: " + dto.getArchitectureId()));
 
-        // Khởi tạo Entity bằng Builder pattern kế thừa từ Entity của bạn
         ProjectEntity project = ProjectEntity.builder()
                 .user(user)
                 .architecture(architecture)
@@ -83,20 +122,18 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.save(project);
     }
 
-    // 2. CHỈNH SỬA PROJECT ĐÃ CÓ
     @Transactional
+    @Override
     public ProjectEntity updateProject(Long id, ProjectDTO dto) {
         ProjectEntity existingProject = projectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy dự án với ID: " + id));
 
-        // Kiểm tra xem có thay đổi kiến trúc hệ thống không
         if (!existingProject.getArchitecture().getId().equals(dto.getArchitectureId())) {
             ArchitectureEntity newArchitecture = architectureRepository.findById(dto.getArchitectureId())
                     .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy kiến trúc ID: " + dto.getArchitectureId()));
             existingProject.setArchitecture(newArchitecture);
         }
 
-        // Cập nhật các trường dữ liệu thô
         existingProject.setTitle(dto.getTitle());
         existingProject.setTechnologies(dto.getTechnologies());
         existingProject.setDescription(dto.getDescription());
@@ -111,14 +148,13 @@ public class ProjectServiceImpl implements ProjectService {
         existingProject.setFromDate(dto.getFromDate());
         existingProject.setToDate(dto.getToDate());
 
-        // Cập nhật lại slug mới dựa theo tiêu đề mới sửa
         existingProject.setSlug(SlugUtil.toSlug(dto.getTitle()));
 
         return projectRepository.save(existingProject);
     }
 
-    // 3. XÓA PROJECT
     @Transactional
+    @Override
     public void deleteProject(Long id) {
         if (!projectRepository.existsById(id)) {
             throw new EntityNotFoundException("Không tìm thấy dự án với ID: " + id);
