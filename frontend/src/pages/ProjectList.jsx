@@ -82,7 +82,7 @@ export default function ProjectManagement() {
                 /* NẾU LÀ ADMIN: Hiện nút Chỉnh sửa và Xóa nhanh */
                 <>
                   <button 
-                    onClick={() => navigate(`/project/edit?id=${project.id}`)}
+                    onClick={() => navigate(`/project/edit?id=${project.slug}`)}
                     className="p-2 bg-white text-gray-700 rounded-full hover:text-blue-600 shadow-md transition"
                     title="Sửa dự án"
                   >
@@ -99,7 +99,7 @@ export default function ProjectManagement() {
               ) : (
                 /* NẾU KHÔNG PHẢI ADMIN: Hiện nhanh một nút xem nhanh dạng icon mắt tròn */
                 <button 
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onClick={() => navigate(`/projects/${project.slug}`)}
                   className="p-2 bg-white text-gray-700 rounded-full hover:text-blue-600 shadow-md transition"
                   title="Xem chi tiết"
                 >
@@ -109,7 +109,7 @@ export default function ProjectManagement() {
             </div>
 
             {/* Ảnh Thumbnail - Click vào ảnh cũng dẫn đi xem chi tiết */}
-            <Link to={`/projects/${project.id}`} className="h-48 bg-gray-100 overflow-hidden block hover:opacity-95 transition-opacity">
+            <Link to={`/projects/${project.slug}`} className="h-48 bg-gray-100 overflow-hidden block hover:opacity-95 transition-opacity">
               <img 
                 src={project.thumbnailLink || 'https://via.placeholder.com/400x200'} 
                 alt={project.title} 
@@ -126,7 +126,7 @@ export default function ProjectManagement() {
                 
                 {/* Tiêu đề - Click vào tiêu đề để xem chi tiết */}
                 <h3 className="font-bold text-lg text-gray-800 line-clamp-1 hover:text-blue-600 transition-colors">
-                  <Link to={`/projects/${project.id}`}>{project.title}</Link>
+                  <Link to={`/projects/${project.slug}`}>{project.title}</Link>
                 </h3>
                 
                 <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{project.description}</p>
@@ -161,7 +161,7 @@ export default function ProjectManagement() {
 
                 {/* NÚT XEM CHI TIẾT DÀNH CHO TẤT CẢ MỌI NGƯỜI */}
                 <button 
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onClick={() => navigate(`/projects/${project.slug}`)}
                   className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                 >
                   Chi tiết →

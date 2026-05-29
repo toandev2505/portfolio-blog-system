@@ -1,6 +1,6 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Search, Bell, User, LogOut, Settings, LogIn } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom'; // Thêm useNavigate để điều hướng không reload
+import { Link, useNavigate } from 'react-router-dom';
 
 import logoImg from '../../assets/logo.png';
 
@@ -9,18 +9,24 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
 
-  // 1. Đọc dữ liệu chứng thực thực tế từ localStorage
+  // 1. Đọc dữ liệu chứng thực và thông tin tài khoản từ localStorage
   const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
+  
+  // Lấy chính xác username được lưu từ bước Đăng nhập (Ví dụ: "toandev2505")
+  // Nếu chưa có, bạn nhớ bổ sung lệnh localStorage.setItem('username', data.username) ở hàm xử lý Login nhé.
+  const currentUsername = localStorage.getItem('username') || 'guest';
+  
   const isAdmin = token && userRole === 'ADMIN';
 
-  // Hàm xử lý Đăng xuất (Clear sạch session và đá về trang chủ)
+  // Hàm xử lý Đăng xuất
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('role');
+    localStorage.removeItem('username'); // Clear thêm username khi logout
     setShowUserMenu(false);
     alert('Đã đăng xuất thành công!');
-    navigate('/'); // Về trang chủ mượt mà
+    navigate('/'); 
   };
 
   // Giả lập danh sách thông báo theo các trạng thái chuẩn hệ thống
@@ -36,7 +42,6 @@ export default function Header() {
         
         {/* LOGO & MENU LINKS */}
         <div className="flex items-center space-x-8">
-          {/* Sửa từ thẻ <a> sang <Link> để tránh reload trang */}
           <Link to="/" className="font-bold text-lg flex items-center gap-2 text-black hover:opacity-80 transition-opacity">
             <img 
               src={logoImg} 
@@ -47,21 +52,10 @@ export default function Header() {
           </Link>
 
           <div className="hidden md:flex space-x-6 text-sm font-medium text-gray-600">
-            <Link to="/" className="hover:text-blue-600 transition-colors">
-              Home
-            </Link>
-
-            <Link to="/projects" className="hover:text-blue-600 transition-colors">
-              Projects
-            </Link>
-            
-            <Link to="/blog" className="hover:text-blue-600 transition-colors">
-              Blog
-            </Link>
-
-            <Link to="/resume" className="hover:text-blue-600 transition-colors">
-              Resume
-            </Link>
+            <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <Link to="/projects" className="hover:text-blue-600 transition-colors">Projects</Link>
+            <Link to="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
+            <Link to="/resume" className="hover:text-blue-600 transition-colors">Resume</Link>
           </div>
         </div>
         
@@ -73,7 +67,7 @@ export default function Header() {
             <Search size={19} />
           </button>
           
-          {/* Notification Bell (Chỉ hiển thị chuông khi người dùng ĐÃ ĐĂNG NHẬP) */}
+          {/* Notification Bell */}
           {token && (
             <div className="relative">
               <button 
@@ -101,9 +95,8 @@ export default function Header() {
             </div>
           )}
 
-          {/* KHỐI LOGIC ĐIỀU KHIỂN: ĐÃ ĐĂNG NHẬP VS CHƯA ĐĂNG NHẬP */}
+          {/* ĐÃ ĐĂNG NHẬP VS CHƯA ĐĂNG NHẬP */}
           {token ? (
-            /* TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP -> HIỂN THỊ DROPDOWN AVATAR USER */
             <div className="relative">
               <button 
                 onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
@@ -111,7 +104,6 @@ export default function Header() {
                 aria-label="User profile"
               >
                 <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold uppercase">
-                  {/* Lấy chữ cái đầu của Role hoặc hiển thị kí tự viết tắt đại diện */}
                   {isAdmin ? 'AD' : 'US'}
                 </div>
               </button>
@@ -123,7 +115,12 @@ export default function Header() {
                     <span className="text-blue-600 text-xs">{userRole}</span>
                   </div>
                   
-                  <Link to="/profile" onClick={() => setShowUserMenu(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-black flex items-center gap-2 transition-colors">
+                  {/* ĐÃ SỬA: Chuyển hướng động theo dạng Template String /profile/${currentUsername} */}
+                  <Link 
+                    to={`/profile/${currentUsername}`} 
+                    onClick={() => setShowUserMenu(false)} 
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-black flex items-center gap-2 transition-colors"
+                  >
                     <User size={16} /> My Profile
                   </Link>
                   
@@ -143,7 +140,6 @@ export default function Header() {
               )}
             </div>
           ) : (
-            /* TRƯỜNG HỢP 2: CHƯA ĐĂNG NHẬP -> HIỂN THỊ NÚT ĐĂNG NHẬP */
             <Link 
               to="/login" 
               className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-4 py-2 rounded-lg transition shadow-sm"
