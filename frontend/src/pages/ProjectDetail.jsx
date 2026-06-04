@@ -2,33 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, Edit2, Trash2, Calendar, User, 
-  ExternalLink, Users, Layers, Star, Layers3, Image 
+  ExternalLink, Users, Layers, Binary
 } from 'lucide-react';
 import axiosInstance from '../api/axiosConfig';
 
 export default function ProjectDetail() {
-  const { slug } = useParams(); // SỬA: Lấy 'slug' từ cấu hình URL (ví dụ: /projects/he-thong-hemis)
+  const { slug } = useParams(); 
   const navigate = useNavigate();
   
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Trạng thái xác thực từ localStorage
   const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
-  const isAdmin = token && userRole === 'ROLE_ADMIN'; // Lưu ý: Đồng bộ chuỗi ROLE_ADMIN chuẩn Spring Security
+  const isAdmin = token && userRole === 'ADMIN';
 
-  // Gọi API lấy dữ liệu chi tiết dựa trên Slug
   useEffect(() => {
     const fetchProjectDetail = async () => {
       try {
-        // Gọi API Public lấy dữ liệu theo slug thay vì ID
         const response = await axiosInstance.get(`/v1/public/projects/${slug}`);
         setProject(response.data);
       } catch (err) {
-        console.error("Lỗi khi tải chi tiết dự án:", err);
-        setError("Không thể tải thông tin dự án hoặc dự án không tồn tại.");
+        console.error("Error loading project details:", err);
+        setError("Could not load project information or the project does not exist.");
       } finally {
         setLoading(false);
       }
@@ -37,235 +34,191 @@ export default function ProjectDetail() {
     if (slug) fetchProjectDetail();
   }, [slug]);
 
-  // Xử lý xóa dự án (Sử dụng ID thực tế bóc tách từ Object trả về)
   const handleDelete = async () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa vĩnh viễn dự án này không?")) {
+    if (window.confirm("Are you sure you want to permanently delete this project?")) {
       try {
-        await axiosInstance.delete(`/v1/admin/projects/${project.id}`);
-        alert("Xóa dự án thành công!");
+        await axiosInstance.delete(`/v1/admin/projects/${project.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert("Project deleted successfully!");
         navigate('/projects'); 
       } catch (err) {
-        console.error("Lỗi khi xóa:", err);
-        alert("Xóa thất bại! Vui lòng kiểm tra lại quyền Admin.");
+        console.error("Error deleting project:", err);
+        alert("Deletion failed! Please check your Admin permissions.");
       }
     }
   };
 
-  // Hàm tiện ích phân tách chuỗi text công nghệ thành mảng (Đề phòng backend trả về chuỗi text thô)
-  const renderTechTags = () => {
-    if (!project.techList || project.techList.length === 0) return null;
-    return project.techList.map((tech, idx) => (
-      <span key={idx} className="bg-blue-50 text-blue-600 text-xs px-2.5 py-0.5 rounded font-medium border border-blue-100">
-        {tech}
-      </span>
-    ));
-  };
-
-  if (loading) return <div className="text-center py-20 text-gray-500">Đang tải thông tin dự án...</div>;
-  if (error) return <div className="text-center py-20 text-red-500 font-medium">{error}</div>;
+  if (loading) return <div className="text-center py-20 text-slate-500 bg-slate-950 min-h-screen">Loading project information...</div>;
+  if (error) return <div className="text-center py-20 text-red-400 bg-slate-950 min-h-screen font-medium">{error}</div>;
   if (!project) return null;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 font-sans">
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto space-y-8">
 
-      {/* THANH ĐIỀU HƯỚNG QUAY LẠI & NÚT QUẢN TRỊ */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <Link to="/projects" className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors">
-          <ArrowLeft size={16} /> Quay lại danh sách dự án
-        </Link>
+        {/* NAVIGATION & MANAGEMENT TOOLBAR */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+          <Link to="/projects" className="flex items-center gap-2 text-sm text-slate-400 hover:text-green-400 transition-colors font-medium">
+            <ArrowLeft size={16} /> Back to project list
+          </Link>
 
-        {isAdmin && (
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button
-              onClick={() => navigate(`/project/edit?id=${project.id}`)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-4 py-2 rounded-lg transition"
-            >
-              <Edit2 size={14} /> Chỉnh sửa
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition"
-            >
-              <Trash2 size={14} /> Xóa dự án
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* BANNER ẢNH DỰ ÁN */}
-      <div className="w-full h-64 sm:h-96 bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-8">
-        <img 
-          src={project.thumbnailLink || 'https://via.placeholder.com/800x400'} 
-          alt={project.title} 
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* CẤU TRÚC NỘI DUNG HAI CỘT */}
-      <div className="grid md:grid-cols-3 gap-8">
-        
-        {/* CỘT TRÁI: NỘI DUNG CHI TIẾT CHÍNH */}
-        <div className="md:col-span-2 space-y-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight leading-tight">
-              {project.title}
-            </h1>
-            <div className="flex items-center gap-4 text-xs text-gray-400">
-              <span>Mã dự án: #{project.id}</span>
-              <span>•</span>
-              <span className="font-mono bg-gray-50 px-2 py-0.5 border rounded">Slug: {project.slug}</span>
+          {isAdmin && (
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => navigate(`/project/edit?id=${project.slug}`)}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-semibold px-4 py-2 rounded-lg transition-all"
+              >
+                <Edit2 size={14} /> Edit Project
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-red-950/30 hover:bg-red-950/50 text-red-400 border border-red-900/40 text-xs font-semibold px-4 py-2 rounded-lg transition-all"
+              >
+                <Trash2 size={14} /> Delete Project
+              </button>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* 1. KHỐI MÔ TẢ DỰ ÁN */}
-          <div className="prose max-w-none">
-            <h3 className="text-lg font-bold text-gray-900 mb-3 border-b pb-1.5 flex items-center gap-2">
-              <Layers size={18} className="text-blue-500" /> Mô tả chi tiết dự án
-            </h3>
-            <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line">
-              {project.description || 'Chưa có thông tin mô tả chi tiết cho dự án này.'}
-            </p>
-          </div>
+        {/* PROJECT IMAGE BANNER */}
+        <div className="w-full h-64 sm:h-[400px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative">
+          <img 
+            src={project.thumbnailLink || 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?q=80&w=1200'} 
+            alt={project.title} 
+            className="w-full h-full object-cover opacity-75"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+        </div>
 
-          {/* 2. KHỐI TÍNH NĂNG NỔI BẬT */}
-          {project.highlightFeatures && (
-            <div className="prose max-w-none">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 border-b pb-1.5 flex items-center gap-2">
-                <Star size={18} className="text-amber-500 fill-amber-500" /> Tính năng nổi bật
+        {/* TWO-COLUMN CONTENT GRID */}
+        <div className="grid md:grid-cols-3 gap-8 items-start">
+          
+          {/* MAIN DETAILS PANEL */}
+          <div className="md:col-span-2 space-y-8">
+            <div className="space-y-3">
+              <h1 className="text-3xl font-extrabold tracking-tight text-slate-100 leading-tight">
+                {project.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500">
+                <span>Project ID: #{project.id}</span>
+                <span>•</span>
+                <span className="bg-slate-900 px-2 py-0.5 border border-slate-800 rounded">Slug: {project.slug}</span>
+              </div>
+            </div>
+
+            {/* DETAILED DESCRIPTION */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-slate-100 border-b border-slate-800 pb-2 flex items-center gap-2">
+                <Layers size={18} className="text-green-400" /> Detailed Project Description
               </h3>
-              <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line bg-amber-50/40 p-4 border border-amber-100 rounded-xl">
-                {project.highlightFeatures}
+              <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-line font-normal">
+                {project.description || 'No detailed specifications have been provided for this project.'}
               </p>
             </div>
-          )}
 
-          {/* 3. KHỐI SƠ ĐỒ HỆ THỐNG VÀ LƯU ĐỒ (DIAGRAM LINKS) */}
-          {project.diagramLinks && (
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 space-y-4">
-              <div>
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <Layers3 size={18} className="text-indigo-500" /> Bản vẽ thiết kế & Sơ đồ hệ thống
+            {/* HIGHLIGHT FEATURES SECTION */}
+            {project.highlightFeatures && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-lg font-bold text-slate-100 border-b border-slate-800 pb-2 flex items-center gap-2">
+                  <Binary size={18} className="text-green-400" /> Highlight Features
                 </h3>
-                <p className="text-xs text-gray-500 mt-1">Hệ thống tài liệu trực quan bao gồm UseCase, sơ đồ luồng dữ liệu DFD và kiến trúc phân tầng.</p>
+                <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-line font-mono bg-slate-900/30 border border-slate-800/80 rounded-xl p-4">
+                  {project.highlightFeatures}
+                </p>
               </div>
-              
-              <div className="pt-2">
-                <a 
-                  href={project.diagramLinks} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition shadow-xs"
-                >
-                  <Image size={16} /> Xem Sơ đồ Hệ thống (Diagrams)
-                  <ExternalLink size={14} />
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* CỘT PHẢI: THÔNG TIN BỔ TRỢ (META WIDGETS) */}
-        <div className="space-y-6">
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-4 shadow-2xs">
-            <h3 className="font-bold text-xs text-gray-400 uppercase tracking-wider">Thông số dự án</h3>
+          {/* META-DATA SIDEBAR PANEL */}
+          <div className="space-y-6 bg-slate-900/30 backdrop-blur-md border border-slate-800 p-6 rounded-xl shadow-xl">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-green-400 border-b border-slate-800 pb-2">
+              Project Profile
+            </h4>
             
-            <div className="space-y-4 text-sm">
-              {/* Vai trò */}
-              <div className="flex items-center gap-3 text-gray-600">
-                <User size={18} className="text-gray-400 shrink-0" />
-                <div>
-                  <span className="block text-xs text-gray-400">Vai trò đảm nhiệm</span>
-                  <span className="font-semibold text-gray-800">{project.role || 'Fullstack Developer'}</span>
-                </div>
+            <div className="space-y-4 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 flex items-center gap-1.5"><User size={14} /> Role:</span>
+                <span className="font-semibold text-slate-300">{project.role || 'Developer'}</span>
               </div>
 
-              {/* Kiến trúc hệ thống */}
-              <div className="flex items-center gap-3 text-gray-600">
-                <Layers size={18} className="text-gray-400 shrink-0" />
-                <div>
-                  <span className="block text-xs text-gray-400">Kiến trúc hệ thống</span>
-                  <span className="font-semibold text-blue-600">
-                    {project.architectureName || 'Chưa xác định' }
-                  </span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 flex items-center gap-1.5"><Layers size={14} /> Architecture:</span>
+                <span className="font-mono text-green-400 bg-green-500/5 px-2 py-0.5 rounded border border-green-500/10">
+                  {project.architecture?.name || 'Standard Architecture'}
+                </span>
               </div>
 
-              {/* Quy mô nhóm */}
-              <div className="flex items-center gap-3 text-gray-600">
-                <Users size={18} className="text-gray-400 shrink-0" />
-                <div>
-                  <span className="block text-xs text-gray-400">Quy mô nhân sự</span>
-                  <span className="font-semibold text-gray-800">
-                    {project.teamSize ? `${project.teamSize} thành viên` : 'Dự án cá nhân'}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 flex items-center gap-1.5"><Users size={14} /> Team Size:</span>
+                <span className="font-semibold text-slate-300 font-mono">{project.teamSize ? `${project.teamSize} Member(s)` : 'Individual'}</span>
               </div>
 
-              {/* Khoảng thời gian */}
-              <div className="flex items-center gap-3 text-gray-600">
-                <Calendar size={18} className="text-gray-400 shrink-0" />
-                <div>
-                  <span className="block text-xs text-gray-400">Thời gian thực hiện</span>
-                  <span className="font-semibold text-gray-800">
-                    {project.fromDate || 'N/A'} — {project.toDate || 'Present'}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 flex items-center gap-1.5"><Calendar size={14} /> Timeline:</span>
+                <span className="font-semibold text-slate-400 font-mono">{project.fromDate || 'N/A'} - {project.toDate || 'Present'}</span>
               </div>
             </div>
 
-            {/* Khối Công nghệ */}
-            <div className="pt-4 border-t border-gray-100 space-y-2">
-              <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Công nghệ cốt lõi</span>
-              <div className="flex flex-wrap gap-1.5">
-                {renderTechTags()}
-              </div>
+            {/* ACTION EXTERNAL SYSTEM LINKAGES */}
+            <div className="pt-4 border-t border-slate-800 flex flex-col gap-2.5">
+              {project.githubLink && (
+                <a 
+                  href={project.githubLink} target="_blank" rel="noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 text-slate-300 border border-slate-800 py-2 rounded-lg text-xs font-semibold transition-all"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                  </svg>
+                  GitHub Repository
+                </a>
+              )}
+              {project.demoLink && (
+                <a 
+                  href={project.demoLink} target="_blank" rel="noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 py-2 rounded-lg text-xs font-semibold transition-all shadow-md"
+                >
+                  <ExternalLink size={14} /> Live Demo Instance
+                </a>
+              )}
+              {project.diagramLinks && (
+                <a 
+                  href={project.diagramLinks} target="_blank" rel="noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-slate-300 border border-slate-800/60 py-2 rounded-lg text-xs font-normal transition-all"
+                >
+                  System Diagrams
+                </a>
+              )}
+              {project.projectLinks && (
+                <a 
+                  href={project.projectLinks} target="_blank" rel="noreferrer"
+                  className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-slate-300 border border-slate-800/60 py-2 rounded-lg text-xs font-normal transition-all"
+                >
+                  Project Documents
+                </a>
+              )}
             </div>
 
-            {/* Tài nguyên liên kết */}
-            <div className="pt-4 border-t border-gray-100 space-y-2.5">
-              <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Tài nguyên mã nguồn</span>
-              <div className="flex flex-col gap-2">
-                {project.githubLink && (
-                  <a 
-                    href={project.githubLink} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-black transition-colors py-1"
+            {/* TECHNOLOGY METRICS MATRICES */}
+            <div className="pt-4 border-t border-slate-800/80 space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Technologies Stack</span>
+              <div className="flex flex-wrap gap-1">
+                {project.techList && project.techList.map((tech, idx) => (
+                  <span 
+                    key={idx} 
+                    className="bg-slate-950 text-slate-300 text-[10px] font-mono tracking-wide px-2 py-0.5 rounded border border-slate-800"
                   >
-                    <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-                    </svg>
-                    Xem mã nguồn GitHub
-                  </a>
-                )}
-                {project.projectLinks && (
-                  <a 
-                    href={project.projectLinks} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors py-1"
-                  >
-                    <ExternalLink size={15} className="text-gray-400" /> Tài liệu đặc tả (SRS)
-                  </a>
-                )}
-                {project.demoLink && (
-                  <a 
-                    href={project.demoLink} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-semibold transition-colors pt-2 border-t border-gray-100"
-                  >
-                    <ExternalLink size={15} /> Khởi chạy Live Demo
-                  </a>
-                )}
+                    {tech}
+                  </span>
+                ))}
               </div>
             </div>
 
           </div>
+
         </div>
 
       </div>
-
     </div>
   );
 }
