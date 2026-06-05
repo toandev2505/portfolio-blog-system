@@ -21,6 +21,8 @@ public class ProjectDTO extends BaseDTO {
 
     private String projectLinks;
     private String diagramLinks;
+    private String[] diagramLinkList;
+
     private String demoLink;
     private String githubLink;
     private String thumbnailLink;

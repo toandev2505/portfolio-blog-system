@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
     Optional<ProjectEntity> findOneBySlug(String slug);
-    boolean existsBySlug(String slug);
 }

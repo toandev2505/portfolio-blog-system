@@ -24,7 +24,7 @@ public class UserEntity extends BaseEntity {
     private String email;
 
     @Column(length = 50)
-    private String role;
+    private String role = "USER";
 
     private Integer status;
 }

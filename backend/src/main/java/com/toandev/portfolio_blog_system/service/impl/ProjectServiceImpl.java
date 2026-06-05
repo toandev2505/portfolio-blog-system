@@ -89,6 +89,15 @@ public class ProjectServiceImpl implements ProjectService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public String getProjectDiagramsBySlug(String slug) {
+        ProjectEntity project = projectRepository.findOneBySlug(slug)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy dự án với slug: " + slug));
+
+        return project.getDiagramLinks();
+    }
+
     @Transactional
     @Override
     public ProjectEntity createProject(ProjectDTO dto, String currentUsername) {
@@ -114,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .role(dto.getRole())
                 .teamSize(dto.getTeamSize())
                 .highlightFeatures(dto.getHighlightFeatures())
-                .slug(SlugUtil.toSlug(dto.getTitle())) // Tự động tạo slug: "Hệ thống HEMIS" -> "he-thong-hemis"
+                .slug(SlugUtil.toSlug(dto.getTitle())) // Tự động tạo slug
                 .fromDate(dto.getFromDate())
                 .toDate(dto.getToDate())
                 .build();

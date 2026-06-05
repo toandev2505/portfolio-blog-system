@@ -3,6 +3,7 @@ package com.toandev.portfolio_blog_system.controller.web;
 import com.toandev.portfolio_blog_system.dto.ProjectDTO;
 import com.toandev.portfolio_blog_system.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class ProjectController {
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
     @GetMapping
     public ResponseEntity<List<ProjectDTO>> getAllProjects() {
@@ -30,5 +30,17 @@ public class ProjectController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/{slug}/diagrams")
+    public ResponseEntity<?> getProjectDiagrams(@PathVariable String slug) {
+        String diagrams = projectService.getProjectDiagramsBySlug(slug);
+
+        if (diagrams == null || diagrams.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Không tìm thấy sơ đồ cho dự án này"));
+        }
+
+        return ResponseEntity.ok(Map.of("diagram_links", diagrams));
     }
 }

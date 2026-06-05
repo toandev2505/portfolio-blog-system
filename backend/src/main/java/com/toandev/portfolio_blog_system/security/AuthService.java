@@ -39,6 +39,8 @@ public class AuthService {
 
         UserEntity userEntity = userConverter.toEntity(userDTO);
 
+        userEntity.setRole("USER");
+
         userRepository.save(userEntity);
 
         return "Đăng ký tài khoản thành công!";

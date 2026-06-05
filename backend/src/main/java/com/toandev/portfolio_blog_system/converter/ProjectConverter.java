@@ -45,8 +45,12 @@ public class ProjectConverter {
                 : new String[0];
         dto.setTechList(techArray);
 
+        String[] diagramLinkList = entity.getDiagramLinks() != null
+                ? entity.getDiagramLinks().split(",\\s*")
+                : new String[0];
+
         dto.setProjectLinks(entity.getProjectLinks());
-        dto.setDiagramLinks(entity.getDiagramLinks());
+        dto.setDiagramLinkList(diagramLinkList);
         dto.setDemoLink(entity.getDemoLink());
         dto.setGithubLink(entity.getGithubLink());
         dto.setThumbnailLink(entity.getThumbnailLink());
