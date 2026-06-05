@@ -170,8 +170,7 @@ export default function ProjectForm() {
   if (pageLoading) return <div className="text-center py-20 text-slate-500 bg-slate-950 min-h-screen">Loading form configuration...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="min-h-full py-12 px-4 sm:px-6 lg:px-8">
         
         <Link 
           to={isEditMode ? `/projects/${projectId}` : "/projects"} 
@@ -379,6 +378,5 @@ export default function ProjectForm() {
           </form>
         </div>
       </div>
-    </div>
   );
 }

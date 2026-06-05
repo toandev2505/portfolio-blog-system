@@ -267,7 +267,6 @@ export default function About() {
                 )}
               </div>
 
-              {/* Nút hành động (CTA) sử dụng Component Common Button của bạn */}
               <div className="pt-6 flex flex-wrap justify-center md:justify-start gap-4">
                 <Button variant="primary" onClick={() => navigate('/resume')}>
                   View My Resume <ArrowRight size={15} className="inline ml-1.5" />

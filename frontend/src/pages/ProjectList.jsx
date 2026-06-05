@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, ExternalLink, Eye, Layers } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+
 import axiosInstance from '../api/axiosConfig';
 
 export default function ProjectList() {
@@ -53,8 +54,7 @@ export default function ProjectList() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-10">
+      <div className="min-h-full py-12 px-4 sm:px-6 lg:px-8">
         
         {/* PAGE HEADER */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-green-500/15 pb-6">
@@ -193,6 +193,5 @@ export default function ProjectList() {
         )}
 
       </div>
-    </div>
   );
 }

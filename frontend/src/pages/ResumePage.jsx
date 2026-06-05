@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, AlertCircle, Calendar, Edit2, Check, X, Briefcase, GraduationCap, Award, Cpu } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+
 import axiosInstance from '../api/axiosConfig';
 
 const ResumePage = () => {
@@ -174,8 +176,7 @@ const ResumePage = () => {
   const { educations, workExperiences, skills, achievements } = profile;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans antialiased py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="min-h-full py-12 px-4 sm:px-6 lg:px-8">
         
         {/* CONTROL AND OPERATION BANNER */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-green-500/15 pb-6">
@@ -369,9 +370,21 @@ const ResumePage = () => {
                             )}
                             
                             {work.jobDescription && (
-                              <p className="text-slate-400 text-xs leading-relaxed whitespace-pre-line pt-2 border-t border-slate-900/60 font-normal">
-                                {work.jobDescription}
-                              </p>
+                              <div className="text-slate-400 text-xs leading-relaxed pt-2 border-t border-slate-900/60 font-normal">
+                                <div className="prose prose-invert max-w-none 
+                                  [&_p]:mb-2 [&_p]:leading-relaxed
+                                  [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3
+                                  [&_li]:mb-1 
+                                  [&_strong]:text-green-400 [&_strong]:font-semibold
+                                  [&_code]:bg-slate-950 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:border [&_code]:border-slate-800 [&_code]:font-mono [&_code]:text-[11px]
+                                  [&_pre]:bg-slate-950 [&_pre]:p-3 [&_pre]:rounded-lg [&_pre]:border [&_pre]:border-slate-800 [&_pre]:my-3 [&_pre]:overflow-x-auto">
+                                  
+                                  <ReactMarkdown>
+                                    {work.jobDescription}
+                                  </ReactMarkdown>
+                                  
+                                </div>
+                              </div>
                             )}
                             
                             {work.technologies && (
@@ -484,7 +497,6 @@ const ResumePage = () => {
         </div>
 
       </div>
-    </div>
   );
 };
 

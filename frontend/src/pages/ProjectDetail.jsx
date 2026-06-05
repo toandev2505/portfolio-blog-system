@@ -54,8 +54,7 @@ export default function ProjectDetail() {
   if (!project) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-full py-12 px-4 sm:px-6 lg:px-8">
 
         {/* NAVIGATION & MANAGEMENT TOOLBAR */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
@@ -217,8 +216,6 @@ export default function ProjectDetail() {
           </div>
 
         </div>
-
-      </div>
     </div>
   );
 }

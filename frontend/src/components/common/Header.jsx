@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
-import { Search, Bell, User, LogOut, Settings, LogIn } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Search, Bell, User, LogOut, Settings, LogIn, Menu, X } from 'lucide-react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 import logoImg from '../../assets/logo.png';
 
 export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State cho mobile menu
   const navigate = useNavigate();
 
-  // 1. Đọc dữ liệu chứng thực và thông tin tài khoản từ localStorage
   const token = localStorage.getItem('accessToken');
   const userRole = localStorage.getItem('role');
   const currentUsername = localStorage.getItem('username') || 'guest';
   const isAdmin = token && userRole === 'ADMIN';
 
-  // Hàm xử lý Đăng xuất
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('role');
-    localStorage.removeItem('username'); 
+    localStorage.removeItem('username');
+    toast.success('Đã đăng xuất!');
+    setIsMobileMenuOpen(false);
     setShowUserMenu(false);
-    alert('Đã đăng xuất thành công!');
-    navigate('/'); 
+    navigate('/');
   };
+
+  const navLinks = [
+    { path: '/', name: 'Home' },
+    { path: '/projects', name: 'Projects' },
+    { path: '/resume', name: 'Resume' },
+    { path: '/blog', name: 'Blog' },
+    { path: '/about', name: 'About Me' }
+  ];
 
   // Danh sách thông báo theo các trạng thái chuẩn hệ thống HEMIS (Draft, Pending, Rejected, Verified, Published)
   const mockNotifications = [
@@ -36,30 +45,36 @@ export default function Header() {
     <nav className="border-b border-green-500/15 sticky top-0 bg-slate-900/70 backdrop-blur-md z-50 select-none text-slate-100">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         
-        {/* LOGO & MENU LINKS */}
-        <div className="flex items-center space-x-8">
-          <Link to="/" className="font-bold text-lg flex items-center gap-2 text-slate-100 hover:text-lime-400 transition-colors">
-            <img 
-              src={logoImg} 
-              alt="MyPortfolio Logo" 
-              className="w-6 h-6 object-contain brightness-110"
-            />
-            MyPortfolio
-          </Link>
+        {/* LOGO */}
+        <Link to="/" className="font-bold text-lg flex items-center gap-2 hover:text-lime-400 transition-colors">
+          <img src={logoImg} alt="Logo" className="w-6 h-6 object-contain" />
+          MyPortfolio
+        </Link>
 
-          <div className="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
-            <Link to="/" className="hover:text-lime-400 transition-colors">Home</Link>
-            <Link to="/projects" className="hover:text-lime-400 transition-colors">Projects</Link>
-            <Link to="/resume" className="hover:text-lime-400 transition-colors">Resume</Link>
-            <Link to="/blog" className="hover:text-lime-400 transition-colors">Blog</Link>
-            <Link to="/about" className="hover:text-lime-400 transition-colors">About Me</Link>
-          </div>
+        {/* DESKTOP MENU LINKS */}
+        <div className="hidden md:flex flex-1 justify-center space-x-2 text-sm font-medium">
+          {navLinks.map((item) => (
+            <NavLink key={item.path} to={item.path} end className={({ isActive }) => 
+              `px-4 py-2 rounded-md transition-all ${isActive ? 'text-lime-400 font-bold' : 'text-slate-300 hover:text-lime-400'}`
+            }>
+              {item.name}
+            </NavLink>
+          ))}
         </div>
-        
-        {/* ACTION BUTTONS */}
-        <div className="flex items-center space-x-3 text-slate-300 relative">
-          
-          {/* Search Button */}
+
+        {/* ACTION BUTTONS & HAMBURGER */}
+        <div className="flex items-center space-x-3">
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden p-2 text-slate-300"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          {/* Desktop Actions (Hidden on mobile) */}
+          <div className="hidden md:flex items-center space-x-3">
+            {/* Search Button */}
           <button className="p-2 hover:text-lime-400 rounded-full hover:bg-slate-800/50 transition-colors" aria-label="Search">
             <Search size={19} />
           </button>
@@ -144,9 +159,43 @@ export default function Header() {
               Đăng nhập
             </Link>
           )}
-
+          </div>
         </div>
       </div>
+
+      {/* MOBILE DROPDOWN MENU */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-slate-900/95 border-t border-green-500/15 p-4 flex flex-col space-y-2 animate-in slide-in-from-top-4">
+          {navLinks.map((item) => (
+            <NavLink 
+              key={item.path} 
+              to={item.path} 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="px-4 py-3 text-slate-300 hover:bg-slate-800 rounded-lg hover:text-lime-400"
+            >
+              {item.name}
+            </NavLink>
+          ))}
+          <div className="pt-4 mt-4 border-t border-slate-700">
+            {token ? (
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-400 hover:bg-red-950/40 rounded-lg transition-colors font-bold"
+              >
+                <LogOut size={18} /> Sign out
+              </button>
+            ) : (
+              <Link 
+                to="/login" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-700/80 text-white rounded-lg hover:bg-green-600 transition-colors font-bold"
+              >
+                <LogIn size={18} /> Đăng nhập
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

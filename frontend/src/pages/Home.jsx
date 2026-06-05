@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-// Import các components common dùng chung
 import Button from '../components/common/Button';
-
-// Import instance Axios đã cấu hình chung
 import axiosInstance from '../api/axiosConfig';
 
 import avatarImg from '../assets/avatar.png';
@@ -129,22 +126,19 @@ export default function Home() {
   }, []);
 
   return (
-    <div 
-      className="flex flex-col text-slate-100 font-sans overflow-x-hidden bg-cover bg-center bg-no-repeat bg-fixed"
-      style={{ 
-        backgroundImage: `url('${bgImg}')` 
-      }}
-    >
-      <div className="flex flex-col bg-black/70 backdrop-blur-[1px]">
+    <div className="relative min-h-screen w-full overflow-x-hidden text-slate-100">
+      <div 
+        className="fixed inset-0 z-0" 
+        style={{ backgroundImage: `url('${bgImg}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      />
+      <div className="fixed inset-0 z-0 bg-black/70" />
 
+
+      <div className="relative z-10">
         <main className="flex-grow">
           
           {/* HERO SECTION */}
           <header
-            // style={{
-            //   opacity: Math.max(1 - scrollY / 700, 0.2),
-            //   transform: `scale(${1 - scrollY * 0.0002})`,
-            // }}
             style={{
               transform: `translateY(${Math.min(scrollY * 0.4, 50)}px)`,
               opacity: Math.max(1 - scrollY / 700, 0),
@@ -167,11 +161,6 @@ export default function Home() {
               className="md:col-span-2 space-y-6 opacity-0 translate-y-12 transition-all duration-[700ms] ease-out"
             >
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                {/* 
-                  RE-DESIGN HIỆU ỨNG TÊN: 
-                  - Thay vì đổi màu gradient sặc sỡ lỗi thời, ta dùng màu Vàng Gold sang trọng (#f59e0b đến #fef08a).
-                  - Animation "elegantGlow" sẽ làm chữ tỏa hào quang nhẹ kết hợp nhịp thở (pulse) tinh tế, nhìn rất công nghệ và cao cấp.
-                */}
                 <style>{`
                   @keyframes elegantGlow {
                     0%, 100% {
@@ -215,7 +204,10 @@ export default function Home() {
                     Quản Lý Dự Án
                   </button>
                 ) : (
-                  <Button variant="secondary" onClick={handleDownloadCV}>
+                  <Button variant="secondary" 
+                    onClick={handleDownloadCV}
+                    className="px-5 py-2.5 rounded-md font-bold text-sm tracking-wide text-white bg-green-700/70 border border-green-400/50 shadow-lg backdrop-blur-md hover:bg-green-600 hover:border-green-400 transition-all duration-200 active:scale-95"
+                  >
                     Download CV
                   </Button>
                 )}
@@ -272,13 +264,6 @@ export default function Home() {
 
           {/* NAVIGATION CARDS */}
           <section
-            // style={{
-            //   opacity: Math.min(scrollY / 300, 1),
-            //   transform: `translateY(${Math.max(
-            //     60 - scrollY * 0.1,
-            //     0
-            //   )}px)`
-            // }}
             className="
               max-w-6xl
               mx-auto
@@ -317,13 +302,6 @@ export default function Home() {
           </section>
 
           <section
-            // style={{
-            //   opacity: Math.min(scrollY / 500, 1),
-            //   transform: `translateY(${Math.max(
-            //     80 - scrollY * 0.08,
-            //     0
-            //   )}px)`
-            // }}
             className="
               max-w-6xl
               mx-auto

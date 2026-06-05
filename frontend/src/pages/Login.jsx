@@ -1,145 +1,151 @@
 import React, { useState } from 'react';
-import { Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
+
 import axiosInstance from '../api/axiosConfig';
+import { Link } from 'react-router-dom';
+import bgImg from '../assets/rocklee-bg.png';
 
 export default function Login() {
-  // 1. Khai báo các State quản lý Form
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 2. Hàm xử lý khi người dùng nhấn nút Đăng Nhập
   const handleLogin = async (e) => {
-    e.preventDefault(); // Ngăn trang web bị reload lại
+    e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Kiểm tra dữ liệu đầu vào cơ bản trước khi gọi API
     if (!username || !password) {
-      setError('Vui lòng điền đầy đủ tài khoản và mật khẩu!');
+      toast.error('Vui lòng điền đầy đủ tài khoản và mật khẩu!');
       setLoading(false);
       return;
     }
 
     try {
-      // Gọi API Login tới Backend Spring Boot
-      const response = await axiosInstance.post('/auth/login', {
-        username: username,
-        password: password
-      });
-
-      // Lấy dữ liệu trả về từ API thành công
+      // 1. Gọi API
+      const response = await axiosInstance.post('/auth/login', { username, password });
+      
+      // 2. Lấy dữ liệu từ response
       const { accessToken, role } = response.data;
-
-      // Lưu trữ thông tin bảo mật vào localStorage của trình duyệt
+      
+      // 3. LƯU LOGIC VÀO BROWSER (Đây là phần bạn đang bị thiếu)
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('role', role);
       localStorage.setItem('username', username);
 
-      alert('Đăng nhập thành công!');
+      // 4. Thông báo và điều hướng
+      toast.success('Đăng nhập thành công!');
       
-      // Chuyển hướng người dùng về trang danh sách dự án (Project Management)
-      window.location.href = '/';
-
+      // Chuyển hướng về trang chủ
+      window.location.href = '/'; 
     } catch (err) {
-      console.error('Lỗi đăng nhập:', err);
-      // Hiển thị thông báo lỗi trả về từ Backend (nếu có)
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError('Không thể kết nối đến máy chủ Backend. Vui lòng thử lại sau!');
-      }
+      // Xử lý lỗi chi tiết
+      const errorMessage = err.response?.data?.error || 'Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.';
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
-      setLoading(false); // Tắt trạng thái chờ loading
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+    <div className="relative min-h-screen flex items-center justify-center p-4">
+      {/* Background Image Layer */}
+      <div 
+        className="fixed inset-0 z-0" 
+        style={{ 
+          backgroundImage: `url('${bgImg}')`, 
+          backgroundSize: 'cover', 
+          backgroundPosition: 'center' 
+        }}
+      />
+      <div className="fixed inset-0 z-0 bg-black/70" />
+
+      {/* Glassmorphism Card */}
+      <div className="relative z-10 max-w-md w-full space-y-8 bg-slate-900/60 backdrop-blur-xl p-8 rounded-2xl border border-green-500/20 shadow-2xl">
         
-        {/* TIÊU ĐỀ FORM */}
         <div className="text-center">
-          <h2 className="mt-2 text-3xl font-extrabold text-gray-900 tracking-tight">
-            Đăng Nhập Hệ Thống
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            Quản lý và cập nhật thông tin Portfolio của bạn
-          </p>
+          <h2 className="text-3xl font-extrabold text-white tracking-tight">Login</h2>
+          <p className="mt-2 text-sm text-slate-400">Hãy cho tôi biết Bạn là ai?</p>
         </div>
 
-        {/* THÔNG BÁO LỖI (NẾU CÓ) */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-2 text-sm animate-pulse">
-            <AlertCircle size={18} className="flex-shrink-0" />
+          <div className="bg-red-950/50 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 text-sm animate-pulse">
+            <AlertCircle size={18} />
             <span>{error}</span>
           </div>
         )}
 
-        {/* FORM NHẬP LIỆU */}
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="space-y-4">
-            
-            {/* Trường Ô Nhập Tài Khoản */}
+            {/* Input Tài khoản */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tài khoản</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Tài khoản</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
                   <User size={18} />
                 </div>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition"
-                  placeholder="Nhập tên đăng nhập..."
+                  className="block w-full pl-10 py-2.5 bg-black/40 border border-green-500/20 rounded-lg text-white placeholder-slate-600 focus:ring-2 focus:ring-green-500/50 outline-none transition"
+                  placeholder="Username"
                 />
               </div>
             </div>
 
-            {/* Trường Ô Nhập Mật Khẩu */}
+            {/* Input Mật khẩu */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+              <label className="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
                   <Lock size={18} />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition"
+                  className="block w-full pl-10 pr-10 py-2.5 bg-black/40 border border-green-500/20 rounded-lg text-white placeholder-slate-600 focus:ring-2 focus:ring-green-500/50 outline-none transition"
                   placeholder="••••••••"
                 />
-                {/* Nút ẩn/hiện mật khẩu trực quan */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-green-400"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
-
           </div>
 
-          {/* NÚT ĐĂNG NHẬP THỰC THI */}
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition shadow-sm ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {loading ? 'Đang xác thực thông tin...' : 'Đăng Nhập'}
-            </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2.5 px-4 bg-green-700/80 hover:bg-green-600 text-white font-bold rounded-lg border border-green-500/30 transition-all active:scale-95 shadow-lg"
+          >
+            {loading ? 'Đang xác thực...' : 'Đăng Nhập'}
+          </button>
+
+          <div className="text-center mt-6">
+            <p className="text-sm text-slate-400">
+              Chưa có tài khoản?{' '}
+              <Link to="/register" className="text-green-400 font-semibold hover:underline transition-all">
+                Đăng ký ngay
+              </Link>
+            </p>
           </div>
         </form>
 
+        <div className="text-center mt-4">
+          <Link to="/" className="text-sm text-slate-400 hover:text-green-400 flex items-center justify-center gap-1 transition-colors">
+            <ArrowLeft size={16} /> Quay lại trang chủ
+          </Link>
+        </div>
       </div>
     </div>
   );
