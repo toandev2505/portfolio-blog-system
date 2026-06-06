@@ -90,7 +90,7 @@ export default function ProjectList() {
                 {isAdmin ? (
                   <>
                     <button 
-                      onClick={() => navigate(`/project/edit?id=${project.slug}`)}
+                      onClick={() => navigate(`/project/edit?id=${project.id}`)}
                       className="p-2 bg-slate-900/90 text-slate-300 rounded-lg hover:text-green-400 border border-slate-700 hover:border-green-500/30 shadow-md transition-all"
                       title="Edit Project"
                     >

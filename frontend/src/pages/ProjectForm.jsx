@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2, Image, UploadCloud, Code2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+
 import axiosInstance from '../api/axiosConfig';
 
 export default function ProjectForm() {
@@ -40,15 +42,22 @@ export default function ProjectForm() {
   useEffect(() => {
     const initializeForm = async () => {
       try {
-        const archResponse = await axiosInstance.get('/v1/public/architectures');
+        setPageLoading(true);
+        // Chạy song song cả hai request
+        const [archResponse, projectResponse] = await Promise.all([
+          axiosInstance.get('/v1/public/architectures'),
+          isEditMode ? axiosInstance.get(`/v1/admin/projects/${projectId}`) : Promise.resolve(null)
+        ]);
+
         setArchitectures(archResponse.data || []);
 
-        if (isEditMode) {
-          const response = await axiosInstance.get(`/v1/public/projects/${projectId}`);
-          const project = response.data;
+        if (isEditMode && projectResponse) {
+          const project = projectResponse.data;
 
-          setFormData({
-            architectureId: project.architecture?.id || '',
+          setFormData(prev => ({
+            ...prev,
+            slug: project.slug || '',
+            architectureId: project.architectureId ? String(project.architectureId) : '',
             title: project.title || '',
             role: project.role || '',
             teamSize: project.teamSize || '',
@@ -56,16 +65,18 @@ export default function ProjectForm() {
             description: project.description || '',
             highlightFeatures: project.highlightFeatures || '',
             projectLinks: project.projectLinks || '',
-            diagramLinks: project.diagramLinks || '',
+            diagramLinks: Array.isArray(project.diagramLinkList) 
+                  ? project.diagramLinkList.join(', ') 
+                  : (project.diagramLinks || ''),
             githubLink: project.githubLink || '',
             demoLink: project.demoLink || '',
             thumbnailLink: project.thumbnailLink || '',
             fromDate: project.fromDate || '',
             toDate: project.toDate || ''
-          });
+          }));
         }
       } catch (err) {
-        console.error('Error loading form configuration:', err);
+        toast.error('Error loading form configuration:', err);
         setError('Unable to load form initialization or architecture configuration.');
       } finally {
         setPageLoading(false);
@@ -77,7 +88,7 @@ export default function ProjectForm() {
 
   const handleOpenUploadWidget = () => {
     if (!window.cloudinary) {
-      alert("Image upload system is not ready yet, please try again in a few seconds!");
+      toast.error("Image upload system is not ready yet, please try again in a few seconds!");
       return;
     }
 
@@ -144,17 +155,17 @@ export default function ProjectForm() {
         await axiosInstance.put(`/v1/admin/projects/${projectId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert('Project updated successfully!');
-        navigate(`/projects/${projectId}`);
+        toast.success('Project updated successfully!');
+        navigate(`/project/edit?id=${projectId}`);
       } else {
         await axiosInstance.post('/v1/admin/projects', payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert('Project added successfully!');
+        toast.success('Project added successfully!');
         navigate('/projects');
       }
     } catch (err) {
-      console.error('Error saving project data:', err);
+      toast.error('Error saving project data:', err);
       if (err.response && err.response.data?.error) {
         setError(err.response.data.error);
       } else {
@@ -173,7 +184,7 @@ export default function ProjectForm() {
       <div className="min-h-full py-12 px-4 sm:px-6 lg:px-8">
         
         <Link 
-          to={isEditMode ? `/projects/${projectId}` : "/projects"} 
+          to={isEditMode ? `/projects/${formData.slug}` : "/projects"} 
           className="flex items-center gap-2 text-sm text-slate-400 hover:text-green-400 mb-6 transition-colors font-medium w-fit"
         >
           <ArrowLeft size={16} /> {isEditMode ? 'Cancel Edit & Go Back' : 'Back to Project List'}
@@ -207,12 +218,12 @@ export default function ProjectForm() {
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">System Architecture *</label>
                 <select
-                  required name="architectureId" value={formData.architectureId} onChange={handleChange}
+                  required name="architectureId" value={String(formData.architectureId)} onChange={handleChange}
                   className={`${inputStyle} bg-slate-900`}
                 >
                   <option value="">-- Select Architecture --</option>
                   {architectures.map(arch => (
-                    <option key={arch.id} value={arch.id} className="bg-slate-900 text-slate-100">
+                    <option key={arch.id} value={String(arch.id)} className="bg-slate-900 text-slate-100">
                       {arch.name || arch.title || `ID: ${arch.id}`}
                     </option>
                   ))}

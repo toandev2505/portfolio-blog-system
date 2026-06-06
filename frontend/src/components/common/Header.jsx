@@ -34,12 +34,7 @@ export default function Header() {
     { path: '/about', name: 'About Me' }
   ];
 
-  // Danh sách thông báo theo các trạng thái chuẩn hệ thống HEMIS (Draft, Pending, Rejected, Verified, Published)
-  const mockNotifications = [
-    { id: 1, text: 'Your thesis record status changed to Published.', time: '2 hours ago', status: 'Published' },
-    { id: 2, text: 'Record updated: Status changed to Pending review.', time: '1 day ago', status: 'Pending' },
-    { id: 3, text: 'Draft submission #104 was Rejected by supervisor.', time: '2 days ago', status: 'Rejected' }
-  ];
+  const [notifications] = useState([]);
 
   return (
     <nav className="border-b border-green-500/15 sticky top-0 bg-slate-900/70 backdrop-blur-md z-50 select-none text-slate-100">
@@ -85,22 +80,30 @@ export default function Header() {
               <button 
                 onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
                 className={`p-2 rounded-full hover:bg-slate-800/50 transition-colors ${showNotifications ? 'text-lime-400 bg-slate-800/40' : ''}`}
-                aria-label="Notifications"
               >
                 <Bell size={19} />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                {/* Chỉ hiện chấm xanh khi có thông báo */}
+                {notifications.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                )}
               </button>
 
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 border border-green-500/20 rounded-lg shadow-2xl py-2 z-50 backdrop-blur-lg animate-in fade-in slide-in-from-top-1 duration-100">
-                  <div className="px-4 py-1.5 font-bold text-sm border-b border-green-500/15 text-green-400">Notifications</div>
+                  <div className="px-4 py-1.5 font-bold text-sm border-b border-green-500/15 text-green-400">
+                    Notifications
+                  </div>
+                  
                   <div className="max-h-64 overflow-y-auto">
-                    {mockNotifications.map((noti) => (
-                      <div key={noti.id} className="px-4 py-3 hover:bg-slate-800/50 border-b border-slate-800/60 last:border-0 cursor-pointer transition-colors">
-                        <p className="text-xs text-slate-200 leading-snug">{noti.text}</p>
-                        <span className="text-[10px] text-slate-400 block mt-1">{noti.time}</span>
+                    {notifications.length > 0 ? (
+                      // Nếu có thông báo, render danh sách ở đây
+                      <div className="p-4 text-slate-300"> {/* Danh sách thông báo */} </div>
+                    ) : (
+                      // Nếu không có thông báo, hiển thị thông báo trống
+                      <div className="px-4 py-6 text-center text-slate-500 text-sm italic">
+                        <p>Chưa có thông báo nào</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}

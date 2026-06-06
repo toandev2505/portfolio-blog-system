@@ -5,13 +5,17 @@ import './App.css';
 // Layout & Pages
 import MainLayout from './components/MainLayout';
 import Home from './pages/Home';
+
 import ProjectList from './pages/ProjectList';
 import ProjectDetail from './pages/ProjectDetail';
 import ProjectForm from './pages/ProjectForm';
+import DiagramDetail from './pages/DiagramDetail';
+
 import ResumePage from './pages/ResumePage';
 import ProfileCardPage from './pages/ProfileCardPage';
 import Blog from './pages/Blog';
 import About from './pages/AboutMe';
+
 import Register from './pages/Register';
 import Login from './pages/Login';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -47,6 +51,7 @@ function App() {
           <Route path="/projects" element={<ProjectList />} />
           <Route path="/projects/:slug" element={<ProjectDetail />} />
           <Route path="/project/edit" element={<ProjectForm />} />
+          <Route path="/projects/:slug/diagrams" element={<DiagramDetail />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/resume" element={<ResumePage />} />
           <Route path="/profile/:username" element={<ProfileCardPage />} />

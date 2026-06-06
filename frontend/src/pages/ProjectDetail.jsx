@@ -65,7 +65,7 @@ export default function ProjectDetail() {
           {isAdmin && (
             <div className="flex gap-2 w-full sm:w-auto">
               <button
-                onClick={() => navigate(`/project/edit?id=${project.slug}`)}
+                onClick={() => navigate(`/project/edit?id=${project.id}`)}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-xs font-semibold px-4 py-2 rounded-lg transition-all"
               >
                 <Edit2 size={14} /> Edit Project
@@ -181,12 +181,12 @@ export default function ProjectDetail() {
                 </a>
               )}
               {project.diagramLinks && (
-                <a 
-                  href={project.diagramLinks} target="_blank" rel="noreferrer"
+                <Link 
+                  to={`/projects/${project.slug}/diagrams`}
                   className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 text-slate-400 hover:text-slate-300 border border-slate-800/60 py-2 rounded-lg text-xs font-normal transition-all"
                 >
-                  System Diagrams
-                </a>
+                  <Layers size={14} /> View System Diagrams
+                </Link>
               )}
               {project.projectLinks && (
                 <a 
