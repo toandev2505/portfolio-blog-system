@@ -2,9 +2,9 @@ spring:
   application:
     name: portfolio-blog-system
   datasource:
-    url: jdbc:postgresql://localhost:5432/portfolio_blog_db
-    username: postgres
-    password: 1111
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
