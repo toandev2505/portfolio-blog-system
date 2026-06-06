@@ -23,4 +23,6 @@ public class ArchitectureController {
     public ResponseEntity<List<ArchitectureDTO>> getAllArchitectures() {
         return ResponseEntity.ok(architectureService.getAllArchitectures());
     }
+
+
 }

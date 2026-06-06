@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController(value = "controllerOfAdminProject")
 @RequestMapping("/api/v1/admin/projects")
 @CrossOrigin(origins = "*")
@@ -17,6 +19,16 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProjectById(@PathVariable("id") Long id) {
+        try {
+            ProjectDTO projectDTO = projectService.getProjectById(id);
+            return ResponseEntity.ok(projectDTO);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
